@@ -14,7 +14,7 @@ import { writeFile } from 'fs/promises'
 const TEMPLATE_URL = 'https://raw.githubusercontent.com/KyuuX444/media-bot/main/image/tiktok-comment-template.jpg'
 const TEMPLATE_PATH = path.join(process.cwd(), 'media', 'tiktok-comment-template.jpg')
 const FONTS_DIR = join(process.cwd(), 'media', 'fonts')
-const FONT_URL = 'https://github.com/google/fonts/raw/main/ofl/tiktoksans/TikTokSans%5Bopsz%2Cslnt%2Cwdth%2Cwght%5D.ttf'
+const FONT_URL = 'https://raw.githubusercontent.com/KyuuX444/media-bot/main/fonts/TikTokSans.ttf'
 const FONT_PATH = join(FONTS_DIR, 'TikTokSans.ttf')
 
 const APPLE_EMOJI_JSON_URL = 'https://media.githubusercontent.com/media/Ditzzx-vibecoder/entahlah/main/emoji-apple.json'
