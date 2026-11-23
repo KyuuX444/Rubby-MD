@@ -153,6 +153,16 @@ The repository features automated remote synchronization:
 
 ## Changelog
 
+### v1.6.0 — Modular Anti-System, Angela Plugins, RPG Family & Obfuscation Security
+
+- **Core Protection & Obfuscation**: Obfuscasi multi-layer pada `main.js` (`controlFlowFlattening`, `stringArray` base64, `numbersToExpressions`, `splitStrings`, `hexadecimal identifiers`) yang rapat dan anti-decode gampang tanpa error runtime, didukung sistem backup lokal terisolasi.
+- **Modular Anti-System Suite (11 Plugin Grup)**: Sistem proteksi grup otomatis (`.antilink`, `.antilinkall`, `.antivirtex`, `.antidelete`, `.antiviewonce`, `.antibot`, `.antitoxic`, `.antispam`, `.antisticker`, `.antinsfw`, dan `.antisettings`/`.listanti`) dengan cache pesan untuk restore pesan terhapus dan isolasi status per grup.
+- **Ekspansi 32 Plugin Angela**: Integrasi AI LLM terkemuka (`.chatgpt`, `.claude`, `.deepseek`, `.llama`, `.qwen`, `.prplx`, `.humanize`, `.paraphrase`, `.summarize`, `.chateverywhere`), streaming anime/drama (`.otakudesu`, `.kusonime`, `.anichin`, `.dramabox`), portal bacaan (`.komikcast`, `.bacakomik`, `.cerpen`, `.wattpad`, `.novelringan`, `.bacanovel`, `.mangatoon`), portal berita nasional (`.kompas`, `.cnbc`, `.sindonews`, `.okezone`), dan islamic suite (`.doaharian`, `.tahlil`, `.wirid`).
+- **RPG Family & Social System**: Hubungan sosial dan kekeluargaan virtual (`.lamar`, `.terimalamar`, `.tolaklamar`, `.kencan`, `.nafkah`, `.adopsi`, `.cerai`, `.keluarga`).
+- **Primbon & Ramalan Nusantara Modular**: Refaktor arsitektur 1 file 1 command untuk 25+ fitur ramalan Jawa & numerologi (weton, jodoh, rejeki, arti nama, tafsir mimpi, shio, horoskop, hari baik/naas/sangar, potensi, dll).
+- **Owner & Group Management**: Penambahan utilitas administrasi grup (`.infogc`, `.groupsetting`, `.setnamegc`, `.setdesc`, `.setppgc`, `.listadmin`, `.totag`) dan kontrol owner (`.exec`, `.clearsession`, `.broadcastgc`, `.block`, `.unblock`, `.listblock`).
+- **Zero-Eval SSMS Manager & Accurate Did You Mean**: Eksekusi SSMS berbasis AST/Sandbox aman dan algoritma pencarian typo perintah akurat dengan normalisasi simbol prefix serta resolusi nomor telepon murni dari WhatsApp LID.
+
 ### v1.5.0 — System Stability & Feature Updates
 
 - **Sistem Registrasi & Profil Pengguna**: Registrasi terpusat, profil akun, dan bonus awal via konfigurasi.

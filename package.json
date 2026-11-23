@@ -1,6 +1,6 @@
 {
   "name": "rubby-multi-device",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Rubby Multi Device - Base WhatsApp Bot with ESM and rubyy-baileys",
   "main": "main.js",
   "type": "module",
