@@ -48,7 +48,7 @@ import axios from 'axios'
 const handler = async (m, { conn, sock, text, usedPrefix, command, reply }) => {
 	const client = conn || sock
 	if (!text) {
-		return reply(`*NPM Package Stalker (Kyzz API)*\n\nContoh:\n${usedPrefix}${command} express\n${usedPrefix}${command} ruby-baileys`)
+		return reply(`*NPM Package Stalker (Kyzz API)*\n\nContoh:\n${usedPrefix}${command} express\n${usedPrefix}${command} rubyy-baileys`)
 	}
 
 	reply(`⏳ Mengambil data package NPM *"${text}"*...`)

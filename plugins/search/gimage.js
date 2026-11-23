@@ -43,7 +43,7 @@
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 */
 
-import { prepareWAMessageMedia } from 'ruby-baileys';
+import { prepareWAMessageMedia } from 'rubyy-baileys';
 import { googleImageSearch } from '../../scrape/googleimage.js';
 import { Carousel } from '../../src/lib/helper-bails.js';
 

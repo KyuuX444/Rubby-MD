@@ -46,7 +46,7 @@
 import fs from 'node:fs';
 import axios from 'axios';
 import sharp from 'sharp';
-import { ButtonV2 } from 'ruby-baileys';
+import { ButtonV2 } from 'rubyy-baileys';
 
 function formatDuration(val) {
 	if (!val || val === '-' || val === 'N/A') return '-';

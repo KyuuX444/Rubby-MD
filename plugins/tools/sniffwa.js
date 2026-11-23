@@ -43,7 +43,7 @@
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 */
 
-import { jidNormalizedUser } from 'ruby-baileys'
+import { jidNormalizedUser } from 'rubyy-baileys'
 
 const handler = async (m, { conn, sock, text, usedPrefix, command, reply }) => {
     const client = conn || sock

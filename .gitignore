@@ -13,5 +13,7 @@ tmp/*
 main.backup.js
 backup.*.js
 backup.main.js
+main.clean.js
+*.clean.js
 
 

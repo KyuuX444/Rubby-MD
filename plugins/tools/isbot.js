@@ -43,7 +43,7 @@
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 */
 
-import { getDevice } from 'ruby-baileys';
+import { getDevice } from 'rubyy-baileys';
 import { isBotMessage } from '../../src/lib/detectbot.js';
 import { getActiveThumbBuffer } from '../../src/lib/thumb.js';
 

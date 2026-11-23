@@ -79,7 +79,20 @@ global.API = (name, path = '/', query = {}, apikeyqueryname) => {
   return baseUrl + path + (search ? '?' + search : '')
 }
 
+global.api = {
+  enabled: process.env.API_ENABLED !== 'false',
+  port: parseInt(process.env.PORT || '3005', 10),
+  key: process.env.RUBBY_API_KEY || 'rubby-secret-key-2026',
+  rateLimit: 60 // Max 60 request per menit per IP
+}
+
+global.ssms = {
+  enabled: true
+}
+
 global.settings = {
+  api: global.api,
+  ssms: global.ssms,
   registration: {
     enabled: true,
     startingLimit: 25,

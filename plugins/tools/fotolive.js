@@ -47,7 +47,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
-import { downloadContentFromMessage, prepareWAMessageMedia, generateWAMessageFromContent } from 'ruby-baileys';
+import { downloadContentFromMessage, prepareWAMessageMedia, generateWAMessageFromContent } from 'rubyy-baileys';
 
 const toSmallCaps = (str) => {
 	const smallCapsMap = {

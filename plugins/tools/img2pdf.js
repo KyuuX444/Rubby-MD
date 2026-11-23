@@ -45,7 +45,7 @@
 
 import PDFDocument from 'pdfkit';
 import sharp from 'sharp';
-import { downloadMediaMessage } from 'ruby-baileys';
+import { downloadMediaMessage } from 'rubyy-baileys';
 import { Button } from '../../src/lib/helper-bails.js';
 
 const toSmallCaps = (str) => {

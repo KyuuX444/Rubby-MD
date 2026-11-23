@@ -1,6 +1,6 @@
 # Rubby Multi-Device
 
-> Enterprise-grade, modular, high-performance WhatsApp automation bot built with pure Node.js ES Modules (ESM) and powered by `ruby-baileys@1.5.17`.
+> Enterprise-grade, modular, high-performance WhatsApp automation bot built with pure Node.js ES Modules (ESM) and powered by `rubyy-baileys@1.5.17`.
 
 ---
 
@@ -20,7 +20,7 @@
 | Component | Technology | Specification / Role |
 | :--- | :--- | :--- |
 | **Runtime Environment** | Node.js | `>= 18.0.0` (Recommended: Node.js 20.x or 22.x LTS) |
-| **Protocol Engine** | `ruby-baileys` | `v1.5.17` — Modern WhatsApp Multi-Device WebSocket Engine |
+| **Protocol Engine** | `rubyy-baileys` | `v1.5.17` — Modern WhatsApp Multi-Device WebSocket Engine |
 | **Database Engine** | `sql.js` | `v1.14.0` — In-memory SQLite WebAssembly with persistent file sync |
 | **Image & Canvas Processor** | `sharp` | `v0.35.5` — High-throughput SVG/PNG/JPEG vector rendering & image manipulation |
 | **Media Stream Processor** | `fluent-ffmpeg` | `v2.1.3` — Audio DSP filter chain and video stream transcoding |
@@ -35,7 +35,7 @@
 
 ```mermaid
 flowchart TD
-    A["WhatsApp WebSocket (ruby-baileys)"] --> B["Message Serializer & LID Resolver"]
+    A["WhatsApp WebSocket (rubyy-baileys)"] --> B["Message Serializer & LID Resolver"]
     B --> C["Plugin Dispatcher & Middleware Guard"]
     C --> D{"Access & Rate Check"}
     D -- Allowed --> E["Plugin Execution Engine"]
@@ -167,7 +167,7 @@ The repository features automated remote synchronization:
 ## License & Attribution
 
 - **Developer**: Kyuu
-- **Core Library**: `ruby-baileys`
+- **Core Library**: `rubyy-baileys`
 - **License**: ISC License
 
 Copyright (c) 2026 Kyuu. All rights reserved.

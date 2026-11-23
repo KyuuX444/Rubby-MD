@@ -46,7 +46,7 @@
 import { randomBytes as rb } from 'crypto'
 import { PassThrough } from 'stream'
 import ffmpeg from 'fluent-ffmpeg'
-import { generateWAMessageContent } from 'ruby-baileys'
+import { generateWAMessageContent } from 'rubyy-baileys'
 
 const warnaMap = {
   biru: 0x1E88E5,

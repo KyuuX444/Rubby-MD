@@ -43,7 +43,7 @@
 
 import vm from 'node:vm'
 import util from 'node:util'
-import { downloadMediaMessage } from 'ruby-baileys'
+import { downloadMediaMessage } from 'rubyy-baileys'
 import { tokenize } from '@rafxzflow/multiscript/src/tokenizer.js'
 import { parse } from '@rafxzflow/multiscript/src/parser.js'
 import { translate, LANGS } from '@rafxzflow/multiscript/src/translator.js'
@@ -501,7 +501,7 @@ const executeInSandbox = async (jsCode) => {
 }
 
 /**
- * Ekstraksi kode dari: Langsung ketik teks, Reply teks pesan, atau Reply file dokumen (via ruby-baileys)
+ * Ekstraksi kode dari: Langsung ketik teks, Reply teks pesan, atau Reply file dokumen (via rubyy-baileys)
  */
 const extractCodeInput = async (m, text, conn) => {
   if (text && text.trim()) {
@@ -513,7 +513,7 @@ const extractCodeInput = async (m, text, conn) => {
       return { code: m.quoted.text.trim(), fileExt: null }
     }
 
-    // Reply file / media dokumen via ruby-baileys
+    // Reply file / media dokumen via rubyy-baileys
     try {
       let buf = null
       if (typeof m.quoted.download === 'function') {
@@ -634,7 +634,7 @@ Atau *reply pesan kode / file script* lalu ketik \`${usedPrefix + cmd}\``)
       const converted = emitCodeToLang(ast, toLang)
 
       const headerText = `✨ *CONVERT: ${fromLang.toUpperCase()} ➔ ${toLang.toUpperCase()}*`
-      const RichClass = typeof global.AIRich !== 'undefined' ? global.AIRich : (await import('ruby-baileys').then(r => r.AIRich).catch(() => null))
+      const RichClass = typeof global.AIRich !== 'undefined' ? global.AIRich : (await import('rubyy-baileys').then(r => r.AIRich).catch(() => null))
 
       if (RichClass && client) {
         try {

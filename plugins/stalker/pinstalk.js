@@ -44,7 +44,7 @@
 */
 
 import axios from 'axios'
-import { prepareWAMessageMedia } from 'ruby-baileys'
+import { prepareWAMessageMedia } from 'rubyy-baileys'
 
 const handler = async (m, { conn, sock, text, usedPrefix, command, reply }) => {
 	const client = conn || sock

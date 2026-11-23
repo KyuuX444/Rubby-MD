@@ -46,7 +46,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import axios from 'axios'
-import { Button, Carousel } from 'ruby-baileys'
+import { Button, Carousel } from 'rubyy-baileys'
 
 const handler = async (m, { conn, sock, text, reply, usedPrefix, command }) => {
 	const client = conn || sock || global.mainSock || global.conn

@@ -43,7 +43,7 @@
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 */
 
-import { delay } from 'ruby-baileys';
+import { delay } from 'rubyy-baileys';
 
 const handler = async (m, { sock, conn, text, usedPrefix, command, reply }) => {
   const client = sock || conn || global.mainSock;

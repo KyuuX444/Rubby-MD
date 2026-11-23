@@ -43,7 +43,7 @@
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 */
 
-import { Button } from 'ruby-baileys'
+import { Button } from 'rubyy-baileys'
 
 let handler = async (m, { sock, conn, text, usedPrefix, command }) => {
   const client = conn || sock

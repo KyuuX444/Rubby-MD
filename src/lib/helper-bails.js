@@ -1,5 +1,5 @@
-export * from 'ruby-baileys'
-export { Button, ButtonV2, Carousel, AIRich } from 'ruby-baileys'
+export * from 'rubyy-baileys'
+export { Button, ButtonV2, Carousel, AIRich } from 'rubyy-baileys'
 
 export class BloksWidget {
   constructor(client) {

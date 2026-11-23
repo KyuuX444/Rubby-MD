@@ -64,6 +64,6 @@ const handler = async (m) => {
 }
 handler.help = ['fishing']
 handler.tags = ['rpg']
-handler.command = ['fishing', 'mancing']
+handler.command = ['fishing', 'mancingikan']
 handler.register = true
 export default handler

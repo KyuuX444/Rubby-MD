@@ -46,7 +46,7 @@
 import fs from 'fs';
 import path from 'path';
 import { exec } from 'child_process';
-import { downloadMediaMessage } from 'ruby-baileys';
+import { downloadMediaMessage } from 'rubyy-baileys';
 
 const toSmallCaps = (str) => {
 	const smallCapsMap = {

@@ -48,7 +48,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { serialize } from './lib/serializer.js'
 import logger, { maskSensitive } from './lib/logger.js'
-import { normalizeJid, normalizeNumber } from './lib/utils.js'
+import { normalizeJid, normalizeNumber, recordLidMapping, resolveLidToPn } from './lib/utils.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const disabledDbFile = path.resolve(__dirname, 'database/disabled_plugins.json')
@@ -74,6 +74,13 @@ export async function getGroupMetadata(sock, jid, force = false) {
   try {
     const meta = await sock.groupMetadata(jid)
     if (meta) {
+      if (meta.participants && Array.isArray(meta.participants)) {
+        for (const p of meta.participants) {
+          if (p.lid && p.id && !p.id.endsWith('@lid')) {
+            recordLidMapping(p.lid, p.id)
+          }
+        }
+      }
       pruneMap(groupMetadataCache, MAX_CACHE_SIZE)
       pruneMap(groupCache, MAX_CACHE_SIZE)
       groupMetadataCache.set(jid, { data: meta, time: Date.now() })
@@ -238,11 +245,83 @@ export async function messageHandler(sock, chatUpdate, registry) {
     if (!m) continue
     if (m.chat.endsWith('@newsletter') || m.chat === 'status@broadcast') continue
 
+    // Global in-memory cache for anti-delete and quote recovery
+    if (!global.msgCache) global.msgCache = new Map()
+    if (m.id && (m.text || m.mtype)) {
+      global.msgCache.set(`${m.chat}_${m.id}`, {
+        text: m.text || '',
+        sender: m.sender,
+        time: Date.now(),
+        mtype: m.mtype || m.type || ''
+      })
+      if (global.msgCache.size > 2000) {
+        const oldest = global.msgCache.keys().next().value
+        global.msgCache.delete(oldest)
+      }
+    }
+
+    const currentBotJid = sock.user?.id ? normalizeJid(sock.user.id) : ''
+    const currentBotNumber = normalizeNumber(currentBotJid)
+
+    let isUserAdmin = Boolean(m.isOwner)
+    let isBotAdmin = false
+    let groupMetadata = null
+
+    if (m.isGroup) {
+      try {
+        groupMetadata = await getGroupMetadata(sock, m.chat)
+        const participants = groupMetadata?.participants || []
+        const userTargets = [
+          m.sender,
+          m.key?.participant,
+          m.key?.participantAlt,
+          m.raw?.participantAlt,
+          m.raw?.key?.participantAlt,
+          normalizeNumber(m.sender)
+        ].filter(Boolean)
+
+        const botTargets = [
+          sock.user?.id,
+          sock.user?.lid,
+          sock.user?.jid,
+          sock.authState?.creds?.me?.id,
+          sock.authState?.creds?.me?.lid,
+          currentBotJid,
+          currentBotNumber,
+          global.noBot,
+          normalizeNumber(global.noBot)
+        ].filter(Boolean)
+
+        const userParticipant = participants.find(p => matchParticipant(p, userTargets))
+        isUserAdmin = Boolean(m.isOwner || (userParticipant && isParticipantAdmin(userParticipant)))
+
+        const botParticipant = participants.find(p => matchParticipant(p, botTargets))
+        isBotAdmin = Boolean(botParticipant && isParticipantAdmin(botParticipant))
+      } catch (err) {
+        logger.error('Failed to pre-fetch group metadata for before hook:', err)
+      }
+    }
+
+    m.isAdmin = isUserAdmin
+    m.isBotAdmin = isBotAdmin
+    m.groupMetadata = groupMetadata
+
     if (registry?.plugins) {
+      const beforeContext = {
+        sock,
+        conn: sock,
+        registry,
+        isOwner: m.isOwner,
+        isAdmin: isUserAdmin,
+        isBotAdmin: isBotAdmin,
+        groupMetadata,
+        getGroup: (chatId) => databaseApi.getGroup(chatId || m.chat)
+      }
+
       for (const pluginData of registry.plugins.values()) {
         if (typeof pluginData.handler?.before === 'function') {
           try {
-            const stop = await pluginData.handler.before(m, { sock, conn: sock, registry })
+            const stop = await pluginData.handler.before(m, beforeContext)
             if (stop) break
           } catch (err) {
             logger.error(`Error in plugin before hook (${pluginData.relativePath}):`, err)
@@ -250,7 +329,7 @@ export async function messageHandler(sock, chatUpdate, registry) {
         }
         if (typeof pluginData.handler?.all === 'function') {
           try {
-            await pluginData.handler.all(m, { sock, conn: sock, registry })
+            await pluginData.handler.all(m, beforeContext)
           } catch (err) {
             logger.error(`Error in plugin all hook (${pluginData.relativePath}):`, err)
           }
@@ -344,10 +423,29 @@ export async function messageHandler(sock, chatUpdate, registry) {
 
     if (!plugin) {
       if (usedPrefix && command.length >= 2 && typeof registry?.findSimilar === 'function') {
-        const suggestion = registry.findSimilar(command, 0.68)
+        const suggestion = registry.findSimilar(command, 0.50)
         if (suggestion) {
           try {
-            await m.reply(`Perintah *${usedPrefix}${command}* tidak ditemukan.\n\nMungkin maksud kamu:\n👉 *${usedPrefix}${suggestion}*`)
+            const didYouMeanText =
+              `╭─── ୨୧ DID YOU MEAN ୨୧ ───╮\n` +
+              `│ ૮₍˶ᵔ ᵕ ᵔ˶₎ა perintah tidak ditemukan!\n` +
+              `╰──────────────────────────╯\n\n` +
+              `Perintah *${usedPrefix}${command}* tidak ditemukan.\n\n` +
+              `Mungkin maksud kamu:\n` +
+              `👉 *${usedPrefix}${suggestion}*`
+
+            const footerText = `© ${global.botName || 'Rubby Multi Device'} • Kyuu`
+
+            try {
+              const { Button } = await import('rubyy-baileys')
+              const btn = new Button(sock)
+                .setBody(didYouMeanText)
+                .setFooter(footerText)
+                .addReply(`👉 ${usedPrefix}${suggestion}`, `${usedPrefix}${suggestion}`)
+              await btn.send(m.chat, { quoted: m.raw })
+            } catch {
+              await m.reply(`${didYouMeanText}\n\n_${footerText}_`)
+            }
           } catch {}
         }
       }
@@ -432,11 +530,7 @@ export async function messageHandler(sock, chatUpdate, registry) {
       }
     }
 
-    let groupMetadata = null
-    let participants = []
-    let isUserAdmin = false
-    let isBotAdmin = false
-
+    let participants = groupMetadata?.participants || []
     if (m.isGroup) {
       const userTargets = [
         m.sender,
