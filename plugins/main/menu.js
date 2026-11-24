@@ -89,42 +89,28 @@ function formatUptime(seconds) {
 
 const categoryEmojis = {
   ai: '🤖',
-  'ai-image': '🪄',
-  asupan: '💃',
-  audio: '🎧',
-  cewerandom: '👧',
   convert: '🔄',
   downloader: '📥',
   download: '📥',
-  ephoto: '📸',
   example: '💡',
   fun: '🎲',
-  github: '🐙',
   group: '👥',
   grup: '👥',
   info: 'ℹ️',
-  islamic: '🌙',
-  main: '🎀',
+  main: '📌',
   maker: '🎨',
-  manga: '📚',
-  news: '📰',
-  novel: '📖',
-  nsfw: '🔞',
   other: '✨',
   owner: '👑',
   panel: '⚡',
   premium: '💎',
-  primbon: '🔮',
   rpg: '⚔️',
   search: '🔍',
   stalk: '🕵️',
-  stalker: '🕵️',
-  streaming: '🎬',
   tools: '🔧',
   webapi: '🌐'
 }
 
-const getEmoji = (cat) => categoryEmojis[cat.toLowerCase()] || '🌸'
+const getEmoji = (cat) => categoryEmojis[cat.toLowerCase()] || '📌'
 
 let cachedThumbBuffer = null
 async function getThumbBuffer() {
@@ -154,18 +140,7 @@ let handler = async (m, { conn, sock, text, args, usedPrefix, registry }) => {
   const senderDisplay = (rawNum && !senderJid.endsWith('@lid')) ? `@${rawNum}` : (m.pushName || 'User')
   const botName = global.botName || 'Rubby Multi Device'
   const prfx = usedPrefix || '.'
-
-  const input = (args?.[0] || text || '').toLowerCase().trim()
-  let page = 1
-  let sub = ''
-
-  const pageMatch = input.match(/^(?:page[:\s]?)?(\d+)$/i) || (args?.[1] && args[0].toLowerCase() === 'page' && args[1].match(/^\d+$/) ? [, args[1]] : null)
-
-  if (pageMatch) {
-    page = parseInt(pageMatch[1], 10) || 1
-  } else {
-    sub = input
-  }
+  const sub = (args?.[0] || text || '').toLowerCase().trim()
 
   const isOwner = checkOwner(senderJid)
   const isPremium = checkPremium(senderJid)
@@ -181,115 +156,98 @@ let handler = async (m, { conn, sock, text, args, usedPrefix, registry }) => {
   const menuStructure = registry.getMenuStructure()
   const categories = menuStructure.categories || {}
   const totalFitur = menuStructure.totalCommands || 0
-  const catList = Object.keys(categories).sort()
 
   const formatSection = (catName, cmdList) => {
     if (!cmdList?.length) return ''
     const emoji = getEmoji(catName)
     const sortedCmds = [...new Set(cmdList.map(c => c.name || c))].sort()
     const lines = sortedCmds.map(cmd => `• ${prfx}${toSmallFont(cmd)}`)
-    return `╭━━━〔 ${emoji} *${toSmallFont(catName.toUpperCase())}* 〕━━━╮\n${lines.join('\n')}\n╰━━━━━━━━━━━━━━━━━━━━╯`
+    return `${emoji} *${toSmallFont(catName.toUpperCase())}*\n${lines.join('\n')}`
   }
 
   let menuText = ''
-  const perPage = 4
-  const totalPages = Math.ceil(catList.length / perPage) || 1
-  const currentPage = Math.max(1, Math.min(totalPages, page))
-  const startIdx = (currentPage - 1) * perPage
-  const currentCats = catList.slice(startIdx, startIdx + perPage)
 
   if (sub === 'all') {
-    menuText = `╭━━━〔 ୨ৎ *${toSmallFont(botName.toUpperCase())}* ୨ৎ 〕━━━╮\n` +
-      `┇ 🌸 *${greeting}*, ${senderDisplay}\n` +
-      `┇ 👑 *Status* : ${statusStr}\n` +
-      `┇ ⏳ *Uptime* : ${uptimeStr}\n` +
-      `┇ ⚙️ *Mode* : ${modeStr}\n` +
-      `┇ 🎯 *Prefix* : [ ${prfx} ]\n` +
-      `┇ 📦 *Total* : ${totalFitur} ${toSmallFont('fitur')}\n` +
-      `╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n`
+    menuText = `${greeting}, ${senderDisplay} 👋\n${toSmallFont('Ini semua fitur')} *${toSmallFont(botName)}*:\n\n` +
+      `• ${toSmallFont('Status')} : *${statusStr}*\n` +
+      `• ${toSmallFont('Uptime')} : ${uptimeStr}\n` +
+      `• ${toSmallFont('Server Uptime')} : ${serverUptimeStr}\n` +
+      `• ${toSmallFont('Mode')} : ${modeStr}\n` +
+      `• ${toSmallFont('Prefix')} : ${prfx}\n\n`
 
-    for (const cat of catList) {
+    for (const cat of Object.keys(categories).sort()) {
       menuText += formatSection(cat, categories[cat]) + '\n\n'
     }
-    menuText += `୨ৎ made with love by Kyuu ♡`
+    menuText += `${toSmallFont('Total')}: ${totalFitur} ${toSmallFont('Commands')}`
   } else if (sub && categories[sub]) {
-    menuText = `╭━━━〔 ୨ৎ *MENU ${toSmallFont(sub.toUpperCase())}* ୨ৎ 〕━━━╮\n` +
-      `┇ 🌸 *${greeting}*, ${senderDisplay}\n` +
-      `┇ 👑 *Status* : ${statusStr}\n` +
-      `┇ ⏳ *Uptime* : ${uptimeStr}\n` +
-      `┇ 🎯 *Prefix* : [ ${prfx} ]\n` +
-      `╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n` +
-      `${formatSection(sub, categories[sub])}\n\n` +
-      `💡 Ketik *${prfx}menu* untuk kembali ke menu utama.`
+    menuText = `${greeting}, ${senderDisplay} 👋\n\n` +
+      `• ${toSmallFont('Status')} : *${statusStr}*\n` +
+      `• ${toSmallFont('Uptime')} : ${uptimeStr}\n` +
+      `• ${toSmallFont('Server Uptime')} : ${serverUptimeStr}\n` +
+      `• ${toSmallFont('Mode')} : ${modeStr}\n` +
+      `• ${toSmallFont('Prefix')} : ${prfx}\n\n` +
+      `${formatSection(sub, categories[sub])}`
   } else {
-    menuText = `╭━━━〔 ୨ৎ *${toSmallFont(botName.toUpperCase())}* ୨ৎ 〕━━━╮\n` +
-      `┇ 🌸 *${greeting}*, ${senderDisplay}\n` +
-      `┇ 👑 *Status* : ${statusStr}\n` +
-      `┇ ⏳ *Uptime* : ${uptimeStr}\n` +
-      `┇ ⚙️ *Mode* : ${modeStr}\n` +
-      `┇ 🎯 *Prefix* : [ ${prfx} ]\n` +
-      `┇ 📦 *Total Fitur* : ${totalFitur} ${toSmallFont('fitur')}\n` +
-      `┇ 📂 *Kategori* : ${catList.length} ${toSmallFont('kategori')}\n` +
-      `┇ 📄 *Halaman* : ${currentPage} / ${totalPages}\n` +
-      `╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n` +
-      `╭━━━〔 📂 *DAFTAR KATEGORI* 〕━━━╮\n`
+    menuText = `${greeting}, ${senderDisplay} 👋\n${toSmallFont('Selamat Datang di')} *${toSmallFont(botName)}*!\n\n` +
+      `• ${toSmallFont('Status')} : *${statusStr}*\n` +
+      `• ${toSmallFont('Uptime')} : ${uptimeStr}\n` +
+      `• ${toSmallFont('Server Uptime')} : ${serverUptimeStr}\n` +
+      `• ${toSmallFont('Mode')} : ${modeStr}\n` +
+      `• ${toSmallFont('Prefix')} : ${prfx}\n\n` +
+      `${toSmallFont('Pilih kategori di tombol bawah, atau ketik')}:\n${prfx}menu <${toSmallFont('kategori')}>\n${prfx}menu all`
+  }
 
-    for (const cat of currentCats) {
-      const count = categories[cat]?.length || 0
-      menuText += `┇ ${getEmoji(cat)} *${toSmallFont(cat.toUpperCase())}* (${count} ${toSmallFont('fitur')})\n`
+  const categoryRows = [
+    {
+      title: toSmallFont('semua menu'),
+      description: toSmallFont('tampilkan semua perintah bot'),
+      id: `${prfx}menu all`
     }
+  ]
 
-    menuText += `╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n` +
-      `💡 *Petunjuk:*\n` +
-      `• Klik tombol di bawah untuk navigasi.\n` +
-      `• Ketik *${prfx}menu <kategori>* untuk membuka kategori.\n` +
-      `• Ketik *${prfx}menu all* untuk melihat semua fitur.`
+  for (const cat of Object.keys(categories).sort()) {
+    categoryRows.push({
+      title: toSmallFont(`menu ${cat.toLowerCase()}`),
+      description: toSmallFont(`daftar perintah ${cat.toLowerCase()}`),
+      id: `${prfx}menu ${cat.toLowerCase()}`
+    })
   }
 
   const thumbBuf = await getThumbBuffer()
-  const footerText = `© ${botName} • Kyuu`
 
-  try {
-    const btn = new ButtonV2(client)
-      .setTitle(botName)
-      .setSubtitle(global.website || 'https://api.kyzzz.xyz')
-      .setBody(menuText)
-      .setFooter(footerText)
-      .setContextInfo({ mentionedJid: [senderJid] })
+  const btn = new ButtonV2(client)
+    .setTitle(botName)
+    .setSubtitle(global.website || 'https://api.kyzzz.xyz')
+    .setBody(`${botName} in here`)
+    .setFooter(menuText)
+    .setContextInfo({ mentionedJid: [senderJid] })
 
-    if (thumbBuf) {
-      btn.setThumbnail(thumbBuf)
-    }
-
-    if (sub && categories[sub]) {
-      btn.addButton(`🔙 ${toSmallFont('Kembali')}`, `${prfx}menu`)
-      btn.addButton(`📑 ${toSmallFont('Semua Menu')}`, `${prfx}menu all`)
-      btn.addButton(`👑 ${toSmallFont('Owner')}`, `${prfx}owner`)
-    } else {
-      // 1. Max 4 Category Buttons for current page
-      for (const cat of currentCats) {
-        btn.addButton(`${getEmoji(cat)} ${toSmallFont(cat)}`, `${prfx}menu ${cat.toLowerCase()}`)
-      }
-
-      // 2. Navigation Buttons (Prev & Next)
-      if (currentPage > 1 && currentPage < totalPages) {
-        btn.addButton(`◀️ Prev`, `${prfx}menu page:${currentPage - 1}`)
-        btn.addButton(`Next ▶️`, `${prfx}menu page:${currentPage + 1}`)
-      } else if (currentPage > 1) {
-        btn.addButton(`◀️ Prev`, `${prfx}menu page:${currentPage - 1}`)
-      } else if (currentPage < totalPages) {
-        btn.addButton(`Next ▶️`, `${prfx}menu page:${currentPage + 1}`)
-      }
-
-      // 3. Quick Action Buttons
-      btn.addButton(`📑 ${toSmallFont('Semua Menu')}`, `${prfx}menu all`)
-      btn.addButton(`👑 ${toSmallFont('Owner')}`, `${prfx}owner`)
-    }
-
-    await btn.send(m.chat, { quoted: m.raw })
-  } catch (err) {
-    await client.sendMessage(m.chat, { text: `${menuText}\n\n_${footerText}_` }, { quoted: m.raw })
+  if (thumbBuf) {
+    btn.setThumbnail(thumbBuf)
   }
+
+  btn.addRawButton({
+    buttonText: { displayText: toSmallFont('pilih menu') },
+    buttonId: 'menu',
+    type: 1,
+    nativeFlowInfo: {
+      name: 'single_select',
+      paramsJson: JSON.stringify({
+        title: toSmallFont('daftar menu'),
+        sections: [
+          {
+            title: toSmallFont('kategori menu'),
+            highlight_label: '',
+            rows: categoryRows
+          }
+        ]
+      })
+    }
+  })
+
+  btn.addButton(`👑 ${toSmallFont('Owner')}`, `${prfx}owner`)
+
+  await btn.send(m.chat, { quoted: m.raw })
 }
 
 handler.command = ['menu', 'main', 'help', 'list']
